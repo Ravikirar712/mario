@@ -26,7 +26,7 @@ function preload(){
   mario_collided = loadAnimation("images/dead.png");
   
   dieSound = loadSound("sounds/dieSound.mp3");
-  
+  restartImgage=loadImage("images/restart.png");
 }
 
 function setup() {
@@ -52,12 +52,18 @@ function setup() {
   bricksGroup = new Group();
   coinsGroup = new Group();
   obstaclesGroup = new Group();
+  restart= createSprite(500,300);
+  restart.addImage(restartImgage);
+  restart.visible=false;
 }
 
 function draw() {
  
-  if (gameState==="PLAY"){
-    
+  if (gameState==="PLAY")
+  {
+    mario.setCollider("rectangle",0,0,200,500);
+    mario.scale =0.3;
+    bg.velocityX = -6;
    //scroll background 
   if (bg.x < 100){
     bg.x=bg.width/4;
@@ -130,8 +136,13 @@ function draw() {
       mario.scale=0.4;
       mario.setCollider("rectangle",0,0,300,10);
       mario.y=570;
+      restart.visible=true;
+      if(mousePressedOver(restart)){
+        restartGame(); 
+       }
+
     }
-   
+    
     //prevent Mario from falling down due to gravity
   mario.collide(ground);
 
@@ -190,4 +201,14 @@ function generateObstacles() {
     obstacle.lifetime = 300;
     obstaclesGroup.add(obstacle);
   }
+}
+
+function restartGame(){
+  gameState ="PLAY";
+  obstaclesGroup.destroyEach();
+  bricksGroup.destroyEach();
+  coinsGroup.destroyEach();
+  mario.changeAnimation("running",mario_running);
+  coinScore=0;
+  restart.visible=false;
 }
